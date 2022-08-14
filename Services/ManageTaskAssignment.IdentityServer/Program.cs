@@ -56,6 +56,7 @@ namespace ManageTaskAssignment.IdentityServer
                     if (!userManager.Users.Any())
                     {
                         userManager.CreateAsync(new ApplicationUser { Email = "omur90@gmail.com", UserName = "omur90" }, "Password12*").Wait();
+                        userManager.CreateAsync(new ApplicationUser { Email = "nazmi@gmail.com", UserName = "nazmi" }, "Password12*").Wait();
                     }
                 }
 
