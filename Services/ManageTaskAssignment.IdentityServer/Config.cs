@@ -1,4 +1,6 @@
-﻿using IdentityServer4.Models;
+﻿using IdentityServer4;
+using IdentityServer4.Models;
+using System;
 using System.Collections.Generic;
 
 namespace ManageTaskAssignment.IdentityServer
@@ -8,46 +10,46 @@ namespace ManageTaskAssignment.IdentityServer
         public static IEnumerable<IdentityResource> IdentityResources =>
                    new IdentityResource[]
                    {
-                new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
+                        new IdentityResources.OpenId(),
+                        new IdentityResources.Profile(),
+                        new IdentityResources.Email(),
                    };
 
         public static IEnumerable<ApiScope> ApiScopes =>
-            new ApiScope[]
-            {
-                new ApiScope("scope1"),
-                new ApiScope("scope2"),
-            };
+          new ApiScope[]
+          {
+                new ApiScope("employee_fullpermission","Employee API için full erişim"),
+                new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
+          };
+
+        public static IEnumerable<ApiResource> ApiResources => new ApiResource[]
+        {
+            new ApiResource("resource_employee"){Scopes={"employee_fullpermission"}}
+        };
 
         public static IEnumerable<Client> Clients =>
             new Client[]
             {
-                // m2m client credentials flow client
                 new Client
                 {
-                    ClientId = "m2m.client",
-                    ClientName = "Client Credentials Client",
-
+                    ClientId = "WebApp",
+                    ClientName = "ManageTaskAssignment Web App",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
-
-                    AllowedScopes = { "scope1" }
+                    ClientSecrets = { new Secret("52D3E908-5974-4905-9D9D-EA25DC94091F".Sha256()) },
+                    AllowedScopes = { "employee_fullpermission" }
                 },
-
-                // interactive client using code flow + pkce
                 new Client
                 {
-                    ClientId = "interactive",
-                    ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
-
-                    AllowedGrantTypes = GrantTypes.Code,
-
-                    RedirectUris = { "https://localhost:44300/signin-oidc" },
-                    FrontChannelLogoutUri = "https://localhost:44300/signout-oidc",
-                    PostLogoutRedirectUris = { "https://localhost:44300/signout-callback-oidc" },
-
+                    ClientId = "WebAppWithUser",
+                    ClientName = "ManageTaskAssignment Web App With Employee",
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    ClientSecrets = { new Secret("2468BD47-4F26-47A2-856F-6974145D1B2C".Sha256()) },
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "scope2" }
+                    AllowedScopes = { "scope1" },
+                    AccessTokenLifetime = 1*60*60,
+                    RefreshTokenExpiration = TokenExpiration.Absolute,
+                    AbsoluteRefreshTokenLifetime =  (int)(DateTime.Now.AddDays(60)-DateTime.Now).TotalSeconds,
+                    RefreshTokenUsage = TokenUsage.ReUse
                 },
             };
     }
