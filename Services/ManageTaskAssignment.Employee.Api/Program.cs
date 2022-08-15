@@ -1,6 +1,8 @@
 using FluentValidation.AspNetCore;
 using ManageTaskAssignment.Employee.Api.Services;
 using ManageTaskAssignment.Employee.Api.Validatiors;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +10,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
-builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddEmployeeDtoValidation>());
+#pragma warning disable CS0618 
 
+
+builder.Services.AddControllers(opt=>
+{
+    opt.Filters.Add(new AuthorizeFilter());
+}).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddEmployeeDtoValidation>());
+
+
+#pragma warning restore CS0618 
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
+{
+    option.Authority = builder.Configuration["IdentityServerURL"];
+    option.Audience = "resource_employee";
+    option.RequireHttpsMetadata = false;
+}); 
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
@@ -28,6 +45,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseAuthentication();
 
 app.MapControllers();
 
