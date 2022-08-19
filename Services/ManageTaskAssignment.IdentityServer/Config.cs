@@ -18,13 +18,15 @@ namespace ManageTaskAssignment.IdentityServer
         public static IEnumerable<ApiScope> ApiScopes =>
           new ApiScope[]
           {
-                new ApiScope("employee_fullpermission","Employee API için full erişim"),
+                new ApiScope("employee_api_fullpermission","Employee API için full erişim"),
+                new ApiScope("task_api_fullpermission","Task API için full erişim"),
                 new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
           };
 
         public static IEnumerable<ApiResource> ApiResources => new ApiResource[]
         {
-            new ApiResource("resource_employee"){Scopes={"employee_fullpermission"}}
+            new ApiResource("resource_employee_api"){Scopes={"employee_api_fullpermission"}},
+            new ApiResource("resource_task_api"){Scopes={"task_api_fullpermission"}}
         };
 
         public static IEnumerable<Client> Clients =>
@@ -36,7 +38,7 @@ namespace ManageTaskAssignment.IdentityServer
                     ClientName = "ManageTaskAssignment Web App",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("52D3E908-5974-4905-9D9D-EA25DC94091F".Sha256()) },
-                    AllowedScopes = { "employee_fullpermission" }
+                    AllowedScopes = { "employee_api_fullpermission", "task_api_fullpermission" }
                 },
                 new Client
                 {

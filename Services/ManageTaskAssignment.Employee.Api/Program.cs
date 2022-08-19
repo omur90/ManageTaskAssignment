@@ -12,19 +12,17 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 #pragma warning disable CS0618 
 
-
 builder.Services.AddControllers(opt=>
 {
     opt.Filters.Add(new AuthorizeFilter());
 }).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddEmployeeDtoValidation>());
-
 
 #pragma warning restore CS0618 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
 {
     option.Authority = builder.Configuration["IdentityServerURL"];
-    option.Audience = "resource_employee";
+    option.Audience = "resource_employee_api";
     option.RequireHttpsMetadata = false;
 }); 
 
