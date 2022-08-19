@@ -1,12 +1,18 @@
 
 using ManageTaskAssignment.Task.Api.Services;
 using ManageTaskAssignment.Task.Api.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
-services.AddControllers();
+services.AddControllers(opt=>
+{
+    opt.Filters.Add(new AuthorizeFilter());
+});
+
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 services.AddHttpContextAccessor();
@@ -17,6 +23,13 @@ services.AddScoped<ITaskService, TaskService>();
 services.AddSingleton<IMongoDbSetting>(mongoSetting =>
 {
     return mongoSetting.GetRequiredService<IOptions<MongoDbSetting>>().Value;
+});
+
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
+{
+    option.Authority = builder.Configuration["IdentityServerURL"];
+    option.Audience = "resource_task_api";
+    option.RequireHttpsMetadata = false; 
 });
 
 var app = builder.Build();
@@ -31,6 +44,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseAuthentication();
 
 app.MapControllers();
 
