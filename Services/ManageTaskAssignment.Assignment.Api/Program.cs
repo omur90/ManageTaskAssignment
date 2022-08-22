@@ -1,44 +1,65 @@
 
+using ManageTaskAssignment.Assignment.Api;
+using ManageTaskAssignment.Assignment.Api.CQRS.Handlers;
+using ManageTaskAssignment.Assignment.Api.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
-services.AddControllers();
+#region ThirdParty Service Register
 
+services.AddControllers();
+services.AddHttpContextAccessor();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
+
+#endregion
+
+services.AddScoped<IWorkOrderService, WorkOrderService>();
+
+#region DbContext Register And Configuration
+
+services.AddDbContext<WorkOrderDbContext>(opt => {
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), configure =>
+    {
+        configure.MigrationsAssembly("ManageTaskAssignment.Assignment.Api");
+    });
+});
+
+#endregion
+
+#region JWT Configuration
 
 services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
 {
     opt.Authority = builder.Configuration["IdentityServerURL"];
-    opt.Audience = "resource_assignment_api_user";
-    opt.RequireHttpsMetadata = false;
-}).AddJwtBearer("BearerWithClient", opt =>
-{
-    opt.Authority = builder.Configuration["IdentityServerURL"];
-    opt.Audience = "resource_assignment_api_client";
+    opt.Audience = "resource_assignment_api";
     opt.RequireHttpsMetadata = false;
 });
 
-
-services.AddAuthorization(options =>
+services.AddAuthorization(option =>
 {
-    options.DefaultPolicy = new AuthorizationPolicyBuilder()
-    .RequireAuthenticatedUser()
-    .AddAuthenticationSchemes("BearerWithClient")
-    .Build(); 
-
-    options.AddPolicy("UserTokenPolicy", new AuthorizationPolicyBuilder()
-            .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-            .RequireAuthenticatedUser()
-            .Build());
+    option.AddPolicy("ClientToken", policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "assignment_api_client_permission"));
+    option.AddPolicy("UserToken", policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "assignment_api_user_permission"));
 });
+
+#endregion
+
+#region CQRS Service Register
+
+services.AddMediatR(typeof(GetWorkOrderEmployeeQueryHandler).Assembly);
+services.AddMediatR(typeof(CompleteWorkOrderCommandHandler).Assembly);
+services.AddMediatR(typeof(CreateWorkOrderCommandHandler).Assembly);
+
+#endregion
+
+#region Middleware Configurations
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -54,3 +75,5 @@ app.UseAuthentication();
 app.MapControllers();
 
 app.Run();
+
+#endregion

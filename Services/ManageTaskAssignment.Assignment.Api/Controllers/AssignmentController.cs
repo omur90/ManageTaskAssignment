@@ -1,4 +1,5 @@
 ﻿
+using ManageTaskAssignment.Assignment.Api.Services;
 using ManageTaskAssignment.SharedObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +11,24 @@ namespace ManageTaskAssignment.Assignment.Api.Controllers
     [Route("api/[controller]/[action]")]
     public class AssignmentController : CustomBaseController
     {
-        [HttpGet] 
-        [Authorize(Policy = "UserTokenPolicy")]
-        public IActionResult TestUser()
+        private readonly IWorkOrderService workOrderService;
+
+        public AssignmentController(IWorkOrderService workOrderService)
         {
-            return Ok();
+            this.workOrderService = workOrderService;
+        }
+
+        [HttpGet] 
+        [Authorize(Policy = "UserToken")]
+        public async Task<IActionResult> GetWorkOrderByEmployee(CancellationToken cancellationToken)
+        {
+            //TODO : Token dan sub claim i alarak employeeId bulunmalı.
+            var id = Guid.NewGuid();
+            return CreateActionResult(await workOrderService.GetWorkOrdersByEmployeeAsync(id, cancellationToken));
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Policy = "ClientToken")]
         public IActionResult TestClient()
         {
             return Ok();

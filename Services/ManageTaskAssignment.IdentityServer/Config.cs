@@ -30,8 +30,7 @@ namespace ManageTaskAssignment.IdentityServer
             new ApiResource(IdentityServerConstants.LocalApi.ScopeName), //for IdentityServer.Api
             new ApiResource("resource_employee_api"){Scopes={"employee_api_fullpermission"}},
             new ApiResource("resource_task_api"){Scopes={"task_api_fullpermission"}},
-            new ApiResource("resource_assignment_api_client"){Scopes={"assignment_api_client_permission"}},
-            new ApiResource("resource_assignment_api_user"){Scopes={"assignment_api_user_permission"}}
+            new ApiResource("resource_assignment_api"){Scopes={"assignment_api_client_permission","assignment_api_user_permission"}}
         };
 
         public static IEnumerable<Client> Clients =>
