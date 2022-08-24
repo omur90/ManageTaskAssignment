@@ -2,7 +2,7 @@
 
 namespace ManageTaskAssignment.Assignment.Api.Dto
 {
-    public class GetWorkOrderByEmployeeDto
+    public class GetWorkOrderDto
     {
         public Guid EmployeeId { get; set; }
         public Guid WorkOrderId { get; set; }

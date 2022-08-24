@@ -31,6 +31,9 @@ services.AddDbContext<WorkOrderDbContext>(opt => {
 
 #endregion
 
+services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+services.AddSingleton<ManageTaskAssignment.SharedObjects.Services.ISharedIdentityService, ManageTaskAssignment.SharedObjects.Services.SharedIdentityService>();
+
 #region JWT Configuration
 
 services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
@@ -50,7 +53,8 @@ services.AddAuthorization(option =>
 
 #region CQRS Service Register
 
-services.AddMediatR(typeof(GetWorkOrderEmployeeQueryHandler).Assembly);
+services.AddMediatR(typeof(GetWorkOrdersEmployeeQueryHandler).Assembly);
+services.AddMediatR(typeof(GetWorkOrderByTaskQueryHandler).Assembly);
 services.AddMediatR(typeof(CompleteWorkOrderCommandHandler).Assembly);
 services.AddMediatR(typeof(CreateWorkOrderCommandHandler).Assembly);
 

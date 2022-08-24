@@ -9,9 +9,9 @@ namespace ManageTaskAssignment.Assignment.Api.Services
 
         Task<GenericResponse<NoContent>> CompleteWorkOrderAsync(CompleteWorkOrderDto workOrderDetail, CancellationToken cancellationToken);
 
-        Task<GenericResponse<List<GetWorkOrderByEmployeeDto>>> GetWorkOrdersByEmployeeAsync(Guid employeeId, CancellationToken cancellationToken);
+        Task<GenericResponse<List<GetWorkOrderDto>>> GetWorkOrdersByEmployeeAsync(CancellationToken cancellationToken);
 
-        Task<GenericResponse<GetWorkOrderByEmployeeDto>> GetWorkOrderItemByEmployeeId(Guid employeeId, CancellationToken cancellationToken);
+        Task<GenericResponse<GetWorkOrderDto>> GetWorkOrderByTaskAsync(Guid taskId, CancellationToken cancellationToken);
 
     }
 }

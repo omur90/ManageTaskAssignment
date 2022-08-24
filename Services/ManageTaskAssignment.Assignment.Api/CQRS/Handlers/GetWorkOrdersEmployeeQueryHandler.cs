@@ -8,32 +8,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ManageTaskAssignment.Assignment.Api.CQRS.Handlers
 {
-    public class GetWorkOrderEmployeeQueryHandler : IRequestHandler<GetWorkOrderByEmployeeQuery, GenericResponse<List<GetWorkOrderByEmployeeDto>>>
+    public class GetWorkOrdersEmployeeQueryHandler : IRequestHandler<GetWorkOrdersByEmployeeQuery, GenericResponse<List<GetWorkOrderDto>>>
     {
         private readonly WorkOrderDbContext workOrderDbContext;
 
         private readonly IHttpContextAccessor contextAccessor;
 
-        public GetWorkOrderEmployeeQueryHandler(WorkOrderDbContext workOrderDbContext, IHttpContextAccessor contextAccessor)
+        public GetWorkOrdersEmployeeQueryHandler(WorkOrderDbContext workOrderDbContext, IHttpContextAccessor contextAccessor)
         {
             this.workOrderDbContext = workOrderDbContext;
             this.contextAccessor = contextAccessor;
         }
 
-        public async Task<GenericResponse<List<GetWorkOrderByEmployeeDto>>> Handle(GetWorkOrderByEmployeeQuery request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<List<GetWorkOrderDto>>> Handle(GetWorkOrdersByEmployeeQuery request, CancellationToken cancellationToken)
         {
             if (request.EmployeeId == Guid.Empty)
             {
                 throw new ArgumentException($"{nameof(request.EmployeeId)} can not be empty value !");
             }
 
-            var responseItem = new List<GetWorkOrderByEmployeeDto>();
+            var responseItem = new List<GetWorkOrderDto>();
 
             var workOrdersByEmployee = await workOrderDbContext.WorkOrders.Where(x => x.EmployeeId == request.EmployeeId).ToListAsync(cancellationToken);
 
             workOrdersByEmployee.ForEach(async x =>
             {
-                var subItem = new GetWorkOrderByEmployeeDto
+                var subItem = new GetWorkOrderDto
                 {
                     EmployeeId = x.EmployeeId,
                     WorkOrderId = x.Id,
@@ -55,7 +55,7 @@ namespace ManageTaskAssignment.Assignment.Api.CQRS.Handlers
                 responseItem.Add(subItem);
             });
 
-            return GenericResponse<List<GetWorkOrderByEmployeeDto>>.Sucess(responseItem, contextAccessor.HttpContext.Response.StatusCode);
+            return GenericResponse<List<GetWorkOrderDto>>.Sucess(responseItem, contextAccessor.HttpContext.Response.StatusCode);
         }
     }
 }

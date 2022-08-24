@@ -4,7 +4,7 @@ using MediatR;
 
 namespace ManageTaskAssignment.Assignment.Api.CQRS.Queries
 {
-    public class GetWorkOrderByEmployeeQuery : IRequest<GenericResponse<List<GetWorkOrderByEmployeeDto>>>
+    public class GetWorkOrdersByEmployeeQuery : IRequest<GenericResponse<List<GetWorkOrderDto>>>
     {
         public Guid EmployeeId { get; set; } 
     }

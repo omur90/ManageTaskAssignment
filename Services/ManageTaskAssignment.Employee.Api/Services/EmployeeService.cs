@@ -29,7 +29,7 @@ namespace ManageTaskAssignment.Employee.Api.Services
             {
                 var employee = ObjectMapper.Mapper.Map<Models.Employee>(employeeDto);
 
-                var executeCount = await _dbConnection.ExecuteAsync("INSERT INTO employee (userid,name,surname,phonenumber,expireworkdate) VALUES (@UserId,@Name,@SurName,@PhoneNumber,@ExpireWorkDate)", employee);
+                var executeCount = await _dbConnection.ExecuteAsync("INSERT INTO employee (userid,name,surname,phonenumber,expireworkdate) VALUES (@EmployeeId,@Name,@SurName,@PhoneNumber,@ExpireWorkDate)", employee);
 
                 if (executeCount <= default(int))
                 {
