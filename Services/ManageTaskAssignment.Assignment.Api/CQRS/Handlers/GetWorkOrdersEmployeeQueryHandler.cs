@@ -24,36 +24,38 @@ namespace ManageTaskAssignment.Assignment.Api.CQRS.Handlers
         {
             if (request.EmployeeId == Guid.Empty)
             {
-                throw new ArgumentException($"{nameof(request.EmployeeId)} can not be empty value !");
+                throw new CustomBusinessException($"{nameof(request.EmployeeId)} can not be empty value !");
             }
 
             var responseItem = new List<GetWorkOrderDto>();
 
-            var workOrdersByEmployee = await workOrderDbContext.WorkOrders.Where(x => x.EmployeeId == request.EmployeeId).ToListAsync(cancellationToken);
+            var workOrdersByEmployee = await workOrderDbContext.WorkOrders.Include(x=> x.WorkOrderDetail).Where(x => x.EmployeeId == request.EmployeeId).ToListAsync(cancellationToken);
 
-            workOrdersByEmployee.ForEach(async x =>
+            if (workOrdersByEmployee.Any())
             {
-                var subItem = new GetWorkOrderDto
+                workOrdersByEmployee.ForEach(x =>
                 {
-                    EmployeeId = x.EmployeeId,
-                    WorkOrderId = x.Id,
-                    TaskId = x.TaskId,
-                    Status = (WorkOrderStatusType)x.StatusId,
-                    IsOpen = x.IsOpen
-                };
-
-                if (!x.IsOpen)
-                {
-                    var workOrderDetail = await workOrderDbContext.WorkOrderDetails.Where(x => x.WorkOrderId == x.Id).FirstOrDefaultAsync(cancellationToken);
-                    if (workOrderDetail != null)
+                    var subItem = new GetWorkOrderDto
                     {
-                        subItem.DetailsOfTask = workOrderDetail.DetailsOfTask;
-                        subItem.WorkOrderDetailId = workOrderDetail.Id;
-                    }
-                }
+                        EmployeeId = x.EmployeeId,
+                        WorkOrderId = x.Id,
+                        TaskId = x.TaskId,
+                        Status = (WorkOrderStatusType)x.StatusId,
+                        IsOpen = x.IsOpen
+                    };
 
-                responseItem.Add(subItem);
-            });
+                    if (!x.IsOpen)
+                    {
+                        if (x.WorkOrderDetail != null)
+                        {
+                            subItem.DetailsOfTask = x.WorkOrderDetail.DetailsOfTask;
+                            subItem.WorkOrderDetailId = x.WorkOrderDetail.Id;
+                        }
+                    }
+
+                    responseItem.Add(subItem);
+                });
+            }
 
             return GenericResponse<List<GetWorkOrderDto>>.Sucess(responseItem, contextAccessor.HttpContext.Response.StatusCode);
         }

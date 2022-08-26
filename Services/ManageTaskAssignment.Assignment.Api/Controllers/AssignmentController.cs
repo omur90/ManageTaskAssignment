@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ManageTaskAssignment.Assignment.Api.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class AssignmentController : CustomBaseController
@@ -21,6 +20,13 @@ namespace ManageTaskAssignment.Assignment.Api.Controllers
 
         [HttpGet]
         [Authorize(Policy = TokenConstants.UserTokenPolicy)]
+        public async Task<IActionResult> GetAllWorkOrder(CancellationToken cancellationToken)
+        {
+            return CreateActionResult(await workOrderService.GetAllWorkOrderAsync(cancellationToken));
+        }
+
+        [HttpGet]
+        [Authorize(Policy = TokenConstants.UserTokenPolicy)]
         public async Task<IActionResult> GetWorkOrdersByEmployee(CancellationToken cancellationToken)
         {
             return CreateActionResult(await workOrderService.GetWorkOrdersByEmployeeAsync(cancellationToken));
@@ -28,9 +34,9 @@ namespace ManageTaskAssignment.Assignment.Api.Controllers
 
         [HttpGet]
         [Authorize(Policy = TokenConstants.ClientTokenPolicy)]
-        public async Task<IActionResult> GetWorkOrderByTask(Guid taskId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetWorkOrderByTask(GetWorkOrderByTaskDto getWorkOrderByTask, CancellationToken cancellationToken)
         {
-            return CreateActionResult(await workOrderService.GetWorkOrderByTaskAsync(taskId, cancellationToken));
+            return CreateActionResult(await workOrderService.GetWorkOrderByTaskAsync(getWorkOrderByTask.TaskId, cancellationToken));
         }
 
         [HttpPost]
@@ -45,6 +51,13 @@ namespace ManageTaskAssignment.Assignment.Api.Controllers
         public async Task<IActionResult> CreateWorkOrder(CreateWorkOrderDto createWorkOrder, CancellationToken cancellationToken)
         {
             return CreateActionResult(await workOrderService.CreateWorkOrderAsync(createWorkOrder, cancellationToken));
+        }
+
+        [HttpPost]
+        [Authorize(Policy = TokenConstants.UserTokenPolicy)]
+        public async Task<IActionResult> CancelWorkOrder(CancelWorkOrderDto cancelWorkOrder, CancellationToken cancellationToken)
+        {
+            return CreateActionResult(await workOrderService.CancelWorkOrderAsync(cancelWorkOrder, cancellationToken));
         }
     }
 }

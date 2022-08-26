@@ -25,11 +25,15 @@ namespace ManageTaskAssignment.Assignment.Api.Services
         {
             try
             {
-                return await mediator.Send(new CompleteWorkOrderCommand { DetailsOfTask = workOrderDetail.DetailsOfTask, UpdatedBy = workOrderDetail.UpdatedBy, WorkOrderId = workOrderDetail.WorkOrderId }, cancellationToken);
+                return await mediator.Send(new CompleteWorkOrderCommand { DetailsOfTask = workOrderDetail.DetailsOfTask, UpdatedBy = sharedIdentityService.FullName, WorkOrderId = workOrderDetail.WorkOrderId }, cancellationToken);
+            }
+            catch (CustomBusinessException ex)
+            {
+                return GenericResponse<NoContent>.Failed(ex.Message, contextAccessor.HttpContext.Response.StatusCode);
             }
             catch (Exception ex)
             {
-                return GenericResponse<NoContent>.Failed(ex.Message, contextAccessor.HttpContext.Response.StatusCode);
+                return GenericResponse<NoContent>.Failed($"{ex.Message} / {ex.InnerException}", contextAccessor.HttpContext.Response.StatusCode);
             }
         }
 
@@ -37,11 +41,15 @@ namespace ManageTaskAssignment.Assignment.Api.Services
         {
             try
             {
-                return await mediator.Send(new CreateWorkOrderCommand { CreatedBy = workOrder.CreatedBy, EmployeeId = workOrder.EmployeeId, TaskId = workOrder.TaskId }, cancellationToken);
+                return await mediator.Send(new CreateWorkOrderCommand { CreatedBy = sharedIdentityService.FullName, EmployeeId = workOrder.EmployeeId, TaskId = workOrder.TaskId }, cancellationToken);
+            }
+            catch (CustomBusinessException ex)
+            {
+                return GenericResponse<NoContent>.Failed(ex.Message, contextAccessor.HttpContext.Response.StatusCode);
             }
             catch (Exception ex)
             {
-                return GenericResponse<NoContent>.Failed(ex.Message, contextAccessor.HttpContext.Response.StatusCode);
+                return GenericResponse<NoContent>.Failed($"{ex.Message} / {ex.InnerException}", contextAccessor.HttpContext.Response.StatusCode);
             }
         }
 
@@ -51,9 +59,13 @@ namespace ManageTaskAssignment.Assignment.Api.Services
             {
                 return await mediator.Send(new GetWorkOrdersByEmployeeQuery { EmployeeId = sharedIdentityService.EmployeeId }, cancellationToken);
             }
-            catch (Exception ex)
+            catch (CustomBusinessException ex)
             {
                 return GenericResponse<List<GetWorkOrderDto>>.Failed(ex.Message, contextAccessor.HttpContext.Response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                return GenericResponse<List<GetWorkOrderDto>>.Failed($"{ex.Message} / {ex.InnerException}", contextAccessor.HttpContext.Response.StatusCode);
             }
         }
 
@@ -63,9 +75,46 @@ namespace ManageTaskAssignment.Assignment.Api.Services
             {
                 return await mediator.Send(new GetWorkOrderByTaskQuery { EmployeeId = sharedIdentityService.EmployeeId, TaskId = taskId }, cancellationToken);
             }
-            catch (Exception ex)
+            catch (CustomBusinessException ex)
             {
                 return GenericResponse<GetWorkOrderDto>.Failed(ex.Message, contextAccessor.HttpContext.Response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                return GenericResponse<GetWorkOrderDto>.Failed($"{ex.Message} / {ex.InnerException}", contextAccessor.HttpContext.Response.StatusCode);
+            }
+        }
+
+        public async Task<GenericResponse<NoContent>> CancelWorkOrderAsync(CancelWorkOrderDto cancelWorkOrder, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await mediator.Send(new CancelWorkOrderCommand { WorkOrderId = cancelWorkOrder.WorkOrderId, EmployeeId = sharedIdentityService.EmployeeId, UpdatedBy = sharedIdentityService.FullName }, cancellationToken);
+            }
+            catch (CustomBusinessException ex)
+            {
+                return GenericResponse<NoContent>.Failed(ex.Message, contextAccessor.HttpContext.Response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                return GenericResponse<NoContent>.Failed($"{ex.Message} / {ex.InnerException}", contextAccessor.HttpContext.Response.StatusCode);
+            }
+
+        }
+
+        public async Task<GenericResponse<List<GetAllWorkOrderDto>>> GetAllWorkOrderAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await mediator.Send(new GetAllWorkOrderQuery { }, cancellationToken);
+            }
+            catch (CustomBusinessException ex)
+            {
+                return GenericResponse<List<GetAllWorkOrderDto>>.Failed(ex.Message, contextAccessor.HttpContext.Response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                return GenericResponse<List<GetAllWorkOrderDto>>.Failed($"{ex.Message} / {ex.InnerException}", contextAccessor.HttpContext.Response.StatusCode);
             }
         }
     }

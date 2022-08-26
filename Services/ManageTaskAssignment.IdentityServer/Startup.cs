@@ -3,6 +3,7 @@
 
 
 using IdentityServer4;
+using IdentityServer4.Services;
 using ManageTaskAssignment.IdentityServer.Data;
 using ManageTaskAssignment.IdentityServer.Models;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +38,7 @@ namespace ManageTaskAssignment.IdentityServer
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+           
             var builder = services.AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;
@@ -51,7 +53,8 @@ namespace ManageTaskAssignment.IdentityServer
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.Clients)
                 .AddInMemoryApiResources(Config.ApiResources)
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddProfileService<ProfileService>();
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();

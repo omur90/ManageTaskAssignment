@@ -26,19 +26,19 @@ namespace ManageTaskAssignment.Assignment.Api.CQRS.Handlers
         {
             if (request.EmployeeId == Guid.Empty)
             {
-                throw new ArgumentException($"{nameof(request.EmployeeId)} can not be empty value !");
+                throw new CustomBusinessException($"{nameof(request.EmployeeId)} can not be empty value !");
             }
 
             if (request.TaskId == Guid.Empty)
             {
-                throw new ArgumentException($"{nameof(request.TaskId)} can not be empty value !");
+                throw new CustomBusinessException($"{nameof(request.TaskId)} can not be empty value !");
             }
 
             var workOrderByTask = await workOrderDbContext.WorkOrders.Where(x => x.EmployeeId == request.EmployeeId && x.TaskId == $"{request.TaskId}").FirstOrDefaultAsync(cancellationToken);
 
             if (workOrderByTask == null)
             {
-                throw new ArgumentException($"{nameof(workOrderByTask)} can not be null !");
+                throw new CustomBusinessException($"{nameof(workOrderByTask)} can not be null !");
             }
 
             return GenericResponse<GetWorkOrderDto>.Sucess(mapper.Map<GetWorkOrderDto>(workOrderByTask), contextAccessor.HttpContext.Response.StatusCode);

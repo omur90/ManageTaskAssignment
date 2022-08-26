@@ -12,5 +12,7 @@ namespace ManageTaskAssignment.Assignment.Api.Enums
         Completed = 3,
         [Description("Reddedildi")]
         Ignored = 4,
+        [Description("İptal Edildi")]
+        Cancelled = 5,
     }
 }

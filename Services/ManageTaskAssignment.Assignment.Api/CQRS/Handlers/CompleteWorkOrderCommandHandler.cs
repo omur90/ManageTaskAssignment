@@ -21,24 +21,24 @@ namespace ManageTaskAssignment.Assignment.Api.CQRS.Handlers
         {
             if (request.WorkOrderId == Guid.Empty)
             {
-                throw new ArgumentException($"{nameof(request.WorkOrderId)} can not be empty value !");
+                throw new CustomBusinessException($"{nameof(request.WorkOrderId)} can not be empty value !");
             }
 
             if (string.IsNullOrWhiteSpace(request.DetailsOfTask))
             {
-                throw new ArgumentException($"{nameof(request.DetailsOfTask)} can not be null or empty value !");
+                throw new CustomBusinessException($"{nameof(request.DetailsOfTask)} can not be null or empty value !");
             }
 
             if (string.IsNullOrWhiteSpace(request.UpdatedBy))
             {
-                throw new ArgumentException($"{nameof(request.UpdatedBy)} can not be null or empty value !");
+                throw new CustomBusinessException($"{nameof(request.UpdatedBy)} can not be null or empty value !");
             }
 
             var workOrderItem = await workOrderDbContext.WorkOrders.Where(x => x.Id == request.WorkOrderId).FirstOrDefaultAsync(cancellationToken);
 
             if (workOrderItem == null)
             {
-                throw new ArgumentException($"{nameof(workOrderItem)} can not find !");
+                throw new CustomBusinessException($"{nameof(workOrderItem)} can not find !");
             }
 
             workOrderItem.IsOpen = false;

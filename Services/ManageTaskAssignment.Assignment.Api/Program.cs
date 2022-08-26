@@ -5,6 +5,8 @@ using ManageTaskAssignment.Assignment.Api.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -43,20 +45,25 @@ services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme
     opt.RequireHttpsMetadata = false;
 });
 
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
 services.AddAuthorization(option =>
 {
     option.AddPolicy("ClientToken", policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "assignment_api_client_permission"));
     option.AddPolicy("UserToken", policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "assignment_api_user_permission"));
 });
 
+
 #endregion
 
 #region CQRS Service Register
 
 services.AddMediatR(typeof(GetWorkOrdersEmployeeQueryHandler).Assembly);
+services.AddMediatR(typeof(GetAllWorkOrderQueryHandler).Assembly);
 services.AddMediatR(typeof(GetWorkOrderByTaskQueryHandler).Assembly);
 services.AddMediatR(typeof(CompleteWorkOrderCommandHandler).Assembly);
 services.AddMediatR(typeof(CreateWorkOrderCommandHandler).Assembly);
+services.AddMediatR(typeof(CancelWorkOrderCommandHandler).Assembly);
 
 #endregion
 

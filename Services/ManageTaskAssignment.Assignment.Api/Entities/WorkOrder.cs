@@ -11,10 +11,10 @@ namespace ManageTaskAssignment.Assignment.Api.Entities
         public int StatusId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
-        public string UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public bool IsOpen { get; set; }
 
-        public virtual WorkOrderDetail WorkOrderDetail { get; set; }
+        public virtual WorkOrderDetail? WorkOrderDetail { get; set; }
     }
 }

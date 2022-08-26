@@ -12,5 +12,7 @@ namespace ManageTaskAssignment.SharedObjects.Services
         }
 
         public Guid EmployeeId =>  Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst("sub").Value);
+
+        public string FullName => _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x=> x.Type == "fullname").Value;
     }
 }

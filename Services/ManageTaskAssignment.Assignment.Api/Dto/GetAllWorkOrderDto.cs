@@ -2,11 +2,11 @@
 
 namespace ManageTaskAssignment.Assignment.Api.Dto
 {
-    public class GetWorkOrderDto
+    public class GetAllWorkOrderDto
     {
         public Guid EmployeeId { get; set; }
         public Guid WorkOrderId { get; set; }
-        public Guid? WorkOrderDetailId { get; set; }
+        public Guid WorkOrderDetailId { get; set; }
         public string TaskId { get; set; }
         public string DetailsOfTask { get; set; }
         public WorkOrderStatusType Status { get; set; }
