@@ -25,7 +25,7 @@ namespace ManageTaskAssignment.Assignment.Api.Services
         {
             try
             {
-                return await mediator.Send(new CompleteWorkOrderCommand { DetailsOfTask = workOrderDetail.DetailsOfTask, UpdatedBy = sharedIdentityService.FullName, WorkOrderId = workOrderDetail.WorkOrderId }, cancellationToken);
+                return await mediator.Send(new CompleteWorkOrderCommand { DetailsOfTask = workOrderDetail.DetailsOfTask, EmployeeId = sharedIdentityService.EmployeeId, UpdatedBy = sharedIdentityService.FullName, WorkOrderId = workOrderDetail.WorkOrderId }, cancellationToken);
             }
             catch (CustomBusinessException ex)
             {

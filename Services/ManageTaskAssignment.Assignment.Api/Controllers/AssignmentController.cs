@@ -19,14 +19,14 @@ namespace ManageTaskAssignment.Assignment.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = TokenConstants.UserTokenPolicy)]
+        [Authorize(Policy = TokenConstants.UserTokenPolicy, Roles = TokenConstants.Admin)]
         public async Task<IActionResult> GetAllWorkOrder(CancellationToken cancellationToken)
         {
             return CreateActionResult(await workOrderService.GetAllWorkOrderAsync(cancellationToken));
         }
 
         [HttpGet]
-        [Authorize(Policy = TokenConstants.UserTokenPolicy)]
+        [Authorize(Policy = TokenConstants.UserTokenPolicy, Roles = TokenConstants.Member)]
         public async Task<IActionResult> GetWorkOrdersByEmployee(CancellationToken cancellationToken)
         {
             return CreateActionResult(await workOrderService.GetWorkOrdersByEmployeeAsync(cancellationToken));
@@ -40,21 +40,21 @@ namespace ManageTaskAssignment.Assignment.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = TokenConstants.UserTokenPolicy)]
+        [Authorize(Policy = TokenConstants.UserTokenPolicy, Roles = TokenConstants.Member)]
         public async Task<IActionResult> CompleteWorkOrder(CompleteWorkOrderDto completeWorkOrder, CancellationToken cancellationToken)
         {
             return CreateActionResult(await workOrderService.CompleteWorkOrderAsync(completeWorkOrder, cancellationToken));
         }
 
         [HttpPost]
-        [Authorize(Policy = TokenConstants.UserTokenPolicy)]
+        [Authorize(Policy = TokenConstants.UserTokenPolicy, Roles = TokenConstants.Admin)]
         public async Task<IActionResult> CreateWorkOrder(CreateWorkOrderDto createWorkOrder, CancellationToken cancellationToken)
         {
             return CreateActionResult(await workOrderService.CreateWorkOrderAsync(createWorkOrder, cancellationToken));
         }
 
         [HttpPost]
-        [Authorize(Policy = TokenConstants.UserTokenPolicy)]
+        [Authorize(Policy = TokenConstants.UserTokenPolicy, Roles = TokenConstants.Member)]
         public async Task<IActionResult> CancelWorkOrder(CancelWorkOrderDto cancelWorkOrder, CancellationToken cancellationToken)
         {
             return CreateActionResult(await workOrderService.CancelWorkOrderAsync(cancelWorkOrder, cancellationToken));

@@ -1,6 +1,7 @@
 ﻿
 using ManageTaskAssignment.Employee.Api.Services;
 using ManageTaskAssignment.SharedObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManageTaskAssignment.Employee.Api.Controllers
@@ -17,14 +18,17 @@ namespace ManageTaskAssignment.Employee.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = TokenConstants.ClientTokenPolicy)]
         public async Task<IActionResult> GetAll()
             => CreateActionResult<List<Models.Employee>>(await _employeeService.GetAllEmployeeAsync());
 
         [HttpGet("{id}")]
+        [Authorize(Policy = TokenConstants.ClientTokenPolicy)]
         public async Task<IActionResult> GetById(string id)
             => CreateActionResult<Models.Employee>(await _employeeService.GetEmployeeByIdAsync(Guid.Parse(id)));
-
+ 
         [HttpPost]
+        [Authorize(Policy = TokenConstants.UserTokenPolicy, Roles = TokenConstants.Admin)]
         public async Task<IActionResult> Add(Dtos.EmployeeDto employee)
         {
             #region FluentValidationHandleErrors

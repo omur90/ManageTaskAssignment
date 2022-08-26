@@ -13,22 +13,24 @@ namespace ManageTaskAssignment.IdentityServer
                         new IdentityResources.OpenId(),
                         new IdentityResources.Profile(),
                         new IdentityResources.Email(),
+                        new IdentityResource{ Name="roles", DisplayName="Roles", Description="Kullanıcı Rolleri", UserClaims = new[]{"role"}}
                    };
 
         public static IEnumerable<ApiScope> ApiScopes =>
           new ApiScope[]
           {
-                new ApiScope("employee_api_fullpermission","Employee API için full erişim"),
+                new ApiScope("employee_api_client_permission","Employee API için client erişimi"),
+                new ApiScope("employee_api_user_permission","Employee API için user erişimi"),
                 new ApiScope("task_api_fullpermission","Task API için full erişim"),
-                new ApiScope("assignment_api_user_permission","Assignment API için full erişim"),
-                new ApiScope("assignment_api_client_permission","Assignment API için full erişim"),
+                new ApiScope("assignment_api_user_permission","Assignment API için user erişim"),
+                new ApiScope("assignment_api_client_permission","Assignment API için client erişim"),
                 new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
           };
 
         public static IEnumerable<ApiResource> ApiResources => new ApiResource[]
         {
             new ApiResource(IdentityServerConstants.LocalApi.ScopeName), //for IdentityServer.Api
-            new ApiResource("resource_employee_api"){Scopes={"employee_api_fullpermission"}},
+            new ApiResource("resource_employee_api"){Scopes={"employee_api_user_permission", "employee_api_client_permission"}},
             new ApiResource("resource_task_api"){Scopes={"task_api_fullpermission"}},
             new ApiResource("resource_assignment_api"){Scopes={"assignment_api_client_permission","assignment_api_user_permission"}}
         };
@@ -45,7 +47,7 @@ namespace ManageTaskAssignment.IdentityServer
                     AllowedScopes = 
                     {
                         IdentityServerConstants.LocalApi.ScopeName,
-                        "employee_api_fullpermission", 
+                        "employee_api_client_permission", 
                         "task_api_fullpermission", 
                         "assignment_api_client_permission" 
                     }
@@ -64,7 +66,8 @@ namespace ManageTaskAssignment.IdentityServer
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
                         "assignment_api_user_permission",
-                        "assignment_api_client_permission"
+                        "employee_api_user_permission",
+                        "roles"
                     },
                     AccessTokenLifetime = 1*60*60,
                     RefreshTokenExpiration = TokenExpiration.Absolute,

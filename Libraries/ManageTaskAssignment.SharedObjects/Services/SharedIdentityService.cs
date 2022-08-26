@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
+#pragma warning disable CS8602 
 namespace ManageTaskAssignment.SharedObjects.Services
 {
     public class SharedIdentityService : ISharedIdentityService
@@ -11,8 +12,10 @@ namespace ManageTaskAssignment.SharedObjects.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Guid EmployeeId =>  Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst("sub").Value);
+        public Guid EmployeeId =>  Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(TokenConstants.SubscriptionClaim).Value);
 
-        public string FullName => _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x=> x.Type == "fullname").Value;
+        public string FullName => _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == TokenConstants.FullNameClaim).Value;
+
+        public bool IsAdminUser => _httpContextAccessor.HttpContext.User.IsInRole(TokenConstants.Admin);
     }
 }
