@@ -1,4 +1,5 @@
 
+using ManageTaskAssignment.SharedObjects;
 using ManageTaskAssignment.Task.Api.Services;
 using ManageTaskAssignment.Task.Api.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,6 +31,12 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     option.Authority = builder.Configuration["IdentityServerURL"];
     option.Audience = "resource_task_api";
     option.RequireHttpsMetadata = false; 
+});
+
+services.AddAuthorization(option =>
+{
+    option.AddPolicy(TokenConstants.UserTokenPolicy, policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "task_api_user_permission"));
+    option.AddPolicy(TokenConstants.ClientTokenPolicy, policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "task_api_client_permission"));
 });
 
 var app = builder.Build();

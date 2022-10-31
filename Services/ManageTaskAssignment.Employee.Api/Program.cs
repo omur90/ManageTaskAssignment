@@ -1,6 +1,7 @@
 using FluentValidation.AspNetCore;
 using ManageTaskAssignment.Employee.Api.Services;
 using ManageTaskAssignment.Employee.Api.Validatiors;
+using ManageTaskAssignment.SharedObjects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,8 +21,8 @@ builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.Authenticati
 
 builder.Services.AddAuthorization(option =>
 {
-    option.AddPolicy("ClientToken", policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "employee_api_client_permission"));
-    option.AddPolicy("UserToken", policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "employee_api_user_permission"));
+    option.AddPolicy(TokenConstants.ClientTokenPolicy, policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "employee_api_client_permission"));
+    option.AddPolicy(TokenConstants.UserTokenPolicy, policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireClaim("scope", "employee_api_user_permission"));
 });
 
 

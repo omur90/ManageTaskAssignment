@@ -21,7 +21,8 @@ namespace ManageTaskAssignment.IdentityServer
           {
                 new ApiScope("employee_api_client_permission","Employee API için client erişimi"),
                 new ApiScope("employee_api_user_permission","Employee API için user erişimi"),
-                new ApiScope("task_api_fullpermission","Task API için full erişim"),
+                new ApiScope("task_api_user_permission","Task API için user erişim"),
+                new ApiScope("task_api_client_permission","Task API için client erişim"),
                 new ApiScope("assignment_api_user_permission","Assignment API için user erişim"),
                 new ApiScope("assignment_api_client_permission","Assignment API için client erişim"),
                 new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
@@ -31,8 +32,8 @@ namespace ManageTaskAssignment.IdentityServer
         {
             new ApiResource(IdentityServerConstants.LocalApi.ScopeName), //for IdentityServer.Api
             new ApiResource("resource_employee_api"){Scopes={"employee_api_user_permission", "employee_api_client_permission"}},
-            new ApiResource("resource_task_api"){Scopes={"task_api_fullpermission"}},
-            new ApiResource("resource_assignment_api"){Scopes={"assignment_api_client_permission","assignment_api_user_permission"}}
+            new ApiResource("resource_task_api"){Scopes={"task_api_user_permission", "task_api_client_permission"}},
+            new ApiResource("resource_assignment_api"){Scopes={"assignment_api_client_permission", "assignment_api_user_permission"}}
         };
 
         public static IEnumerable<Client> Clients =>
@@ -44,12 +45,12 @@ namespace ManageTaskAssignment.IdentityServer
                     ClientName = "ManageTaskAssignment Web App",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("52D3E908-5974-4905-9D9D-EA25DC94091F".Sha256()) },
-                    AllowedScopes = 
+                    AllowedScopes =
                     {
                         IdentityServerConstants.LocalApi.ScopeName,
-                        "employee_api_client_permission", 
-                        "task_api_fullpermission", 
-                        "assignment_api_client_permission" 
+                        "employee_api_client_permission",
+                        "task_api_client_permission",
+                        "assignment_api_client_permission"
                     }
                 },
                 new Client
@@ -59,7 +60,7 @@ namespace ManageTaskAssignment.IdentityServer
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     ClientSecrets = { new Secret("2468BD47-4F26-47A2-856F-6974145D1B2C".Sha256()) },
                     AllowOfflineAccess = true,
-                    AllowedScopes = 
+                    AllowedScopes =
                     {
                         IdentityServerConstants.LocalApi.ScopeName,
                         IdentityServerConstants.StandardScopes.Email,
@@ -67,6 +68,7 @@ namespace ManageTaskAssignment.IdentityServer
                         IdentityServerConstants.StandardScopes.OfflineAccess,
                         "assignment_api_user_permission",
                         "employee_api_user_permission",
+                        "task_api_user_permission",
                         "roles"
                     },
                     AccessTokenLifetime = 1*60*60,
