@@ -2,6 +2,7 @@
 using ManageTaskAssignment.Assignment.Api.CQRS.Commands;
 using ManageTaskAssignment.Assignment.Api.Enums;
 using ManageTaskAssignment.SharedObjects;
+using ManageTaskAssignment.SharedObjects.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,10 +15,13 @@ namespace ManageTaskAssignment.Assignment.Api.CQRS.Handlers
 
         private readonly IHttpContextAccessor contextAccessor;
 
-        public CancelWorkOrderCommandHandler(WorkOrderDbContext workOrderDbContext, IHttpContextAccessor contextAccessor)
+        private readonly ISharedIdentityService sharedIdentityService;
+
+        public CancelWorkOrderCommandHandler(WorkOrderDbContext workOrderDbContext, IHttpContextAccessor contextAccessor, ISharedIdentityService sharedIdentityService)
         {
             this.workOrderDbContext = workOrderDbContext;
             this.contextAccessor = contextAccessor;
+            this.sharedIdentityService = sharedIdentityService;
         }
 
         public async Task<GenericResponse<NoContent>> Handle(CancelWorkOrderCommand request, CancellationToken cancellationToken)
@@ -39,7 +43,7 @@ namespace ManageTaskAssignment.Assignment.Api.CQRS.Handlers
                 throw new CustomBusinessException("Can not update after the job is done !");
             }
 
-            if (workOrder.EmployeeId != request.EmployeeId)
+            if (workOrder.EmployeeId != request.EmployeeId && !sharedIdentityService.IsAdminUser)
             {
                 throw new CustomBusinessException("Can not cancel cause your token does not match !");
             }
